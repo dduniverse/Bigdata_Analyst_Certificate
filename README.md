@@ -1,1 +1,1 @@
-# bigdata_analysis_qualification
+# Bigdata_Analyst_Certificate
