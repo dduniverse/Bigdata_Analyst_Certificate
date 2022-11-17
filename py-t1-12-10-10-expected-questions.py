@@ -11,13 +11,15 @@ import pandas as pd
 
 df=pd.read_csv('../input/covid-vaccination-vs-death/covid-vaccination-vs-death_ratio.csv')
 
+# 'country'기준 'ratio'의 평균값 구하기
 df_ratio=df.groupby('country')[['ratio']].mean().reset_index(drop=False)
+# 접종률 상위 하위 10개씩 찾기 위해 'ratio' 기준 내림차순으로 정렬
 df_ratio.sort_values('ratio',ascending=False,inplace=True)
+# 100%가 넘지 않는 데이터만 사용
 df_ratio=df_ratio[df_ratio['ratio']<100]
-print(df_ratio)
 
-high10=df_ratio.head(10).mean()
-low10=df_ratio.tail(10).mean()
+high10=df_ratio.head(10).mean() # 상위 10개 국가의 평균 접종률
+low10=df_ratio.tail(10).mean() # 하위 10개 국가의 평균 접종률
 print(round(high10-low10,2))
 
 
