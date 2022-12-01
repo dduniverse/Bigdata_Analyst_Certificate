@@ -93,5 +93,5 @@ pred3=model3.predict_proba(X_valid)
 # print('XGB',roc_auc_score(Y_valid,pred3[:,1])) # 0.8025 # 0.8061
 
 # 결과 제출
-result=model1.predict_proba(x_test)
+result=model3.predict_proba(x_test)
 pd.DataFrame({'id':id,'TravelInsurance':result[:,1]}).to_csv('travelinsurance_predict.csv',index=False)
