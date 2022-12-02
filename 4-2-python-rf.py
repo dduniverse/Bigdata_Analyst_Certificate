@@ -60,8 +60,21 @@ pred1=model1.predict(X_valid)
 # model2.fit(X_train,Y_train)
 # pred2=model2.predict(X_valid)
 
-# from sklearn.metrics import f1_score
-# print('RF',f1_score(Y_valid,pred1,average='macro')) # 0.4697
+# # 하이퍼파라미터 튜닝
+# from sklearn.model_selection import GridSearchCV
+# parameters={'n_estimators':[50,100],'max_depth':[4,6]}
+# model3=RandomForestClassifier()
+# clf=GridSearchCV(estimator=model3, param_grid=parameters, cv=3)
+# clf.fit(X_train,Y_train)
+# # print('최적의 파라미터: ',clf.best_params_) # {'max_depth': 6,'n_estimators': 50}
 
-result=model1.predict(x_test)
+model4=RandomForestClassifier(max_depth=6, n_estimators=50)
+model4.fit(X_train,Y_train)
+pred4=model4.predict(X_valid)
+
+# from sklearn.metrics import f1_score
+# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 0.4697
+# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 0.5093
+
+result=model4.predict(x_test)
 pd.DataFrame({'ID':id,'Segmentation':result}).to_csv('submission.csv',index=False)
