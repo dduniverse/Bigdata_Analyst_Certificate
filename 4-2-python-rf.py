@@ -16,18 +16,22 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 # You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
 # You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
 
+
+# 데이터 불러오기
 train=pd.read_csv('/kaggle/input/big-data-analytics-certification-kr-2022/train.csv')
 test=pd.read_csv('/kaggle/input/big-data-analytics-certification-kr-2022/test.csv')
 
+# 불필요한 컬럼 제거
 id=test['ID']
 x_train=train.drop(columns=['ID','Segmentation'])
 x_test=test.drop(columns=['ID'])
 y_train=train['Segmentation']
 
+# # 결측치 확인
 # print(x_train.isnull().sum()) # 결측치 없음
 # print(x_test.isnull().sum())
 
-
+# 라벨 인코딩 - 범주형 변수
 from sklearn.preprocessing import LabelEncoder
 col=['Gender','Ever_Married','Graduated','Profession','Spending_Score','Var_1']
 encoder=LabelEncoder()
@@ -37,24 +41,29 @@ for i in col:
     x_train[i]=x_train[i].astype('category')
     x_test[i]=x_test[i].astype('category')
 
+# 더미 변환
 x_train=pd.get_dummies(x_train)
 x_test=pd.get_dummies(x_test)
 
+# 스케일링 - 수치형 변수
 from sklearn.preprocessing import StandardScaler
 val=[['Age','Work_Experience','Family_Size']]
 scaler=StandardScaler()
 for i in val:
     x_train[i]=scaler.fit_transform(x_train[i])
     x_test[i]=scaler.transform(x_test[i])
-    
+
+# 검증 데이터 분리
 from sklearn.model_selection import train_test_split
 X_train,X_valid,Y_train,Y_valid=train_test_split(x_train,y_train,test_size=0.2,random_state=10)
 
+# 모델 생성 1(RF)
 from sklearn.ensemble import RandomForestClassifier
 model1=RandomForestClassifier()
 model1.fit(X_train,Y_train)
 pred1=model1.predict(X_valid)
 
+# # 모델 생성2(XGB)
 # from xgboost import XGBClassifier # ValueError: Invalid classes inferred from unique values of `y`. Expected: [0 1 2 3], got [1 2 3 4]
 # model2=XGBClassifier()
 # model2.fit(X_train,Y_train)
@@ -68,13 +77,16 @@ pred1=model1.predict(X_valid)
 # clf.fit(X_train,Y_train)
 # # print('최적의 파라미터: ',clf.best_params_) # {'max_depth': 6,'n_estimators': 50}
 
+# 최종 모델(RF)
 model4=RandomForestClassifier(max_depth=6, n_estimators=50)
 model4.fit(X_train,Y_train)
 pred4=model4.predict(X_valid)
 
+# # 성능 평가
 # from sklearn.metrics import f1_score
-# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 0.4697
-# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 0.5093
+# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 하이퍼파라미터 튜닝 전 0.4697
+# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 하이퍼파라미터 튜닝 후 0.5093
 
+# 결과 제출
 result=model4.predict(x_test)
 pd.DataFrame({'ID':id,'Segmentation':result}).to_csv('submission.csv',index=False)
