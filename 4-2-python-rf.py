@@ -41,6 +41,8 @@ for i in col:
     x_train[i]=x_train[i].astype('category')
     x_test[i]=x_test[i].astype('category')
 
+y_train=encoder.fit_transform(y_train) # XGB ValueError로 인해 encoding 진행
+    
 # 더미 변환
 x_train=pd.get_dummies(x_train)
 x_test=pd.get_dummies(x_test)
@@ -63,11 +65,11 @@ model1=RandomForestClassifier()
 model1.fit(X_train,Y_train)
 pred1=model1.predict(X_valid)
 
-# # 모델 생성2(XGB)
-# from xgboost import XGBClassifier # ValueError: Invalid classes inferred from unique values of `y`. Expected: [0 1 2 3], got [1 2 3 4]
-# model2=XGBClassifier()
-# model2.fit(X_train,Y_train)
-# pred2=model2.predict(X_valid)
+# 모델 생성2(XGB)
+from xgboost import XGBClassifier # ValueError: Invalid classes inferred from unique values of `y`. Expected: [0 1 2 3], got [1 2 3 4]
+model2=XGBClassifier()
+model2.fit(X_train,Y_train)
+pred2=model2.predict(X_valid)
 
 # # 하이퍼파라미터 튜닝
 # from sklearn.model_selection import GridSearchCV
@@ -75,17 +77,18 @@ pred1=model1.predict(X_valid)
 # model3=RandomForestClassifier()
 # clf=GridSearchCV(estimator=model3, param_grid=parameters, cv=3)
 # clf.fit(X_train,Y_train)
-# # print('최적의 파라미터: ',clf.best_params_) # {'max_depth': 6,'n_estimators': 50}
+# print('최적의 파라미터: ',clf.best_params_) # {'max_depth': 6,'n_estimators': 100}
 
 # 최종 모델(RF)
-model4=RandomForestClassifier(max_depth=6, n_estimators=50)
+model4=RandomForestClassifier(max_depth=6, n_estimators=100)
 model4.fit(X_train,Y_train)
 pred4=model4.predict(X_valid)
 
 # # 성능 평가
 # from sklearn.metrics import f1_score
-# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 하이퍼파라미터 튜닝 전 0.4697
-# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 하이퍼파라미터 튜닝 후 0.5093
+# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 하이퍼파라미터 튜닝 전 0.4795
+# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 하이퍼파라미터 튜닝 후 0.5094
+# print('XGB',f1_score(Y_valid,pred2,average='macro')) # 0.4992
 
 # 결과 제출
 result=model4.predict(x_test)
