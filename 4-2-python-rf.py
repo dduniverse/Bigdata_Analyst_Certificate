@@ -40,8 +40,6 @@ for i in col:
     x_test[i]=encoder.transform(x_test[i])
     x_train[i]=x_train[i].astype('category')
     x_test[i]=x_test[i].astype('category')
-
-y_train=encoder.fit_transform(y_train) # XGB ValueError로 인해 encoding 진행
     
 # 더미 변환
 x_train=pd.get_dummies(x_train)
@@ -65,11 +63,11 @@ model1=RandomForestClassifier()
 model1.fit(X_train,Y_train)
 pred1=model1.predict(X_valid)
 
-# 모델 생성2(XGB)
-from xgboost import XGBClassifier # ValueError: Invalid classes inferred from unique values of `y`. Expected: [0 1 2 3], got [1 2 3 4]
-model2=XGBClassifier()
-model2.fit(X_train,Y_train)
-pred2=model2.predict(X_valid)
+# # 모델 생성2(XGB)
+# from xgboost import XGBClassifier # ValueError: Invalid classes inferred from unique values of `y`. Expected: [0 1 2 3], got [1 2 3 4]
+# model2=XGBClassifier()
+# model2.fit(X_train,Y_train)
+# pred2=model2.predict(X_valid)
 
 # # 하이퍼파라미터 튜닝
 # from sklearn.model_selection import GridSearchCV
@@ -86,9 +84,9 @@ pred4=model4.predict(X_valid)
 
 # # 성능 평가
 # from sklearn.metrics import f1_score
-# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 하이퍼파라미터 튜닝 전 0.4795
-# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 하이퍼파라미터 튜닝 후 0.5094
-# print('XGB',f1_score(Y_valid,pred2,average='macro')) # 0.4992
+# print('RF1',f1_score(Y_valid,pred1,average='macro')) # 하이퍼파라미터 튜닝 전 0.4725
+# print('RF4',f1_score(Y_valid,pred4,average='macro')) # 하이퍼파라미터 튜닝 후 0.5142
+# print('XGB',f1_score(Y_valid,pred2,average='macro')) # 0.1295
 
 # 결과 제출
 result=model4.predict(x_test)
